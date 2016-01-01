@@ -1,11 +1,11 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'mobiledoc/html/renderer/version'
+require 'mobiledoc_html_renderer/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "mobiledoc-html-renderer"
-  spec.version       = Mobiledoc::Html::Renderer::VERSION
+  spec.version       = Mobiledoc::HTMLRenderer::VERSION
   spec.authors       = ["Justin Giancola"]
   spec.email         = ["justin.giancola@gmail.com"]
 

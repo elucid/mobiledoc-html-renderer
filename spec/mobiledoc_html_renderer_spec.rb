@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe Mobiledoc::Html::Renderer do
+describe Mobiledoc::HTMLRenderer do
   it 'has a version number' do
-    expect(Mobiledoc::Html::Renderer::VERSION).not_to be nil
+    expect(Mobiledoc::HTMLRenderer::VERSION).not_to be nil
   end
 
   it 'does something useful' do

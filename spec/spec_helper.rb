@@ -1,2 +1,2 @@
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
-require 'mobiledoc/html/renderer'
+require 'mobiledoc_html_renderer'
