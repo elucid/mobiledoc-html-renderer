@@ -64,4 +64,24 @@ describe Mobiledoc::HTMLRenderer do
 
     expect(rendered).to eq('<div><p><b>hello world</b></p></div>')
   end
+
+  it 'renders a mobiledoc with complex (has attributes) markup' do
+    mobiledoc = {
+      'version' => MOBILEDOC_VERSION,
+      'sections' => [
+        [ # markers
+          ['A', ['href', 'http://google.com']],
+        ],
+        [ # sections
+          [MARKUP_SECTION_TYPE, 'P', [
+            [[0], 1, 'hello world']
+          ]]
+        ]
+      ]
+    }
+
+    rendered = render(mobiledoc)
+
+    expect(rendered).to eq('<div><p><a href="http://google.com">hello world</a></p></div>')
+  end
 end
