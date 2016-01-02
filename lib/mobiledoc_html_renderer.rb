@@ -41,8 +41,22 @@ module Mobiledoc
       Nokogiri::XML::Node.new(tag_name, doc)
     end
 
+    def set_attribute(element, prop_name, prop_value)
+      element.set_attribute(prop_name, prop_value)
+    end
+
     def create_text_node(text)
       Nokogiri::XML::Text.new(text, doc)
+    end
+
+    def create_element_from_marker_type(tag_name='', attributes=[])
+      element = create_element(tag_name)
+
+      attributes.each_slice(2) do |prop_name, prop_value|
+        set_attribute(element, prop_name, prop_value)
+      end
+
+      element
     end
 
     def append_child(target, child)
@@ -77,7 +91,7 @@ module Mobiledoc
           tag_name = marker_type.first
 
           if valid_marker_type?(tag_name)
-            opened_element = create_element_from_marker_type(marker_type)
+            opened_element = create_element_from_marker_type(*marker_type)
             append_child(current_element, opened_element)
             elements.push(opened_element)
             current_element = opened_element
@@ -106,6 +120,12 @@ module Mobiledoc
       else
         raise StandardError.new("Cannot validate tagName for unknown section type #{section_type}")
       end
+    end
+
+    def valid_marker_type?(type)
+      type = normalize_tag_name(type)
+
+      MARKUP_TYPES.include?(type)
     end
   end
 end

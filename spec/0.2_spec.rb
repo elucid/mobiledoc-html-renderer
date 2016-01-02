@@ -44,4 +44,24 @@ describe Mobiledoc::HTMLRenderer do
 
     expect(rendered).to eq('<div><p>hello world</p></div>')
   end
+
+  it 'renders a mobiledoc with simple (no attributes) markup' do
+    mobiledoc = {
+      'version' => MOBILEDOC_VERSION,
+      'sections' => [
+        [ # markers
+          ['B'],
+        ],
+        [ # sections
+          [MARKUP_SECTION_TYPE, 'P', [
+            [[0], 1, 'hello world']]
+          ]
+        ]
+      ]
+    }
+
+    rendered = render(mobiledoc)
+
+    expect(rendered).to eq('<div><p><b>hello world</b></p></div>')
+  end
 end
