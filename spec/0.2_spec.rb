@@ -11,7 +11,7 @@ describe Mobiledoc::HTMLRenderer do
   MOBILEDOC_VERSION = '0.2.0'
 
   def render(mobiledoc)
-    described_class.new(mobiledoc).render[:result]
+    described_class.new.render(mobiledoc)[:result]
   end
 
   let(:data_uri) { "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=" }
