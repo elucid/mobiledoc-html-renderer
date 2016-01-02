@@ -84,4 +84,28 @@ describe Mobiledoc::HTMLRenderer do
 
     expect(rendered).to eq('<div><p><a href="http://google.com">hello world</a></p></div>')
   end
+
+  it 'renders a mobiledoc with multiple markups in a section' do
+    mobiledoc = {
+      'version' => MOBILEDOC_VERSION,
+      'sections' => [
+        [ # markers
+          ['B'],
+          ['I']
+        ],
+        [ # sections
+          [MARKUP_SECTION_TYPE, 'P', [
+            [[0], 0, 'hello '], # b
+            [[1], 0, 'brave '], # b + i
+            [[], 1, 'new '], # close i
+            [[], 1, 'world'] # close b
+          ]]
+        ]
+      ]
+    }
+
+    rendered = render(mobiledoc)
+
+    expect(rendered).to eq('<div><p><b>hello <i>brave new </i>world</b></p></div>')
+  end
 end
