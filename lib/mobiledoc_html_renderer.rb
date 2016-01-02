@@ -151,8 +151,7 @@ module Mobiledoc
 
     def _create_card_argument(card, payload={})
       env = {
-        name: card.name,
-        in_editor?: false
+        name: card.name
       }
 
       [ env, card_options, payload ]
