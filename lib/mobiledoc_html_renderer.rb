@@ -2,20 +2,24 @@ require "mobiledoc_html_renderer/version"
 require "nokogiri"
 require "mobiledoc_html_renderer/utils/section_types"
 require "mobiledoc_html_renderer/utils/tag_names"
+require "mobiledoc_html_renderer/cards/image"
+require "mobiledoc_html_renderer/cards/unknown"
 
 module Mobiledoc
   class HTMLRenderer
     include Mobiledoc::Utils::SectionTypes
     include Mobiledoc::Utils::TagNames
 
-    attr_accessor :root, :marker_types, :sections, :doc
+    attr_accessor :root, :marker_types, :sections, :doc, :cards, :card_options
 
-    def initialize(mobiledoc)
+    def initialize(mobiledoc, state={})
       version, section_data = *mobiledoc.values_at('version', 'sections')
       self.marker_types, self.sections = *section_data
 
       self.doc = Nokogiri::HTML::DocumentFragment.parse('')
       self.root = create_document_fragment
+      self.cards = state[:cards] || []
+      self.card_options = state[:card_options] || {}
     end
 
     def render
@@ -70,6 +74,8 @@ module Mobiledoc
         render_markup_section(*section)
       when IMAGE_SECTION_TYPE
         render_image_section(*section)
+      when CARD_SECTION_TYPE
+        render_card_section(*section)
       end
     end
 
@@ -85,6 +91,60 @@ module Mobiledoc
       element = create_element('img')
       set_attribute(element, 'src', url)
       element
+    end
+
+    def render_card_section(type, name, payload)
+      card = find_card(name)
+
+      card_wrapper = _create_card_element
+      card_arg = _create_card_argument(card, payload)
+      rendered = card.render(*card_arg)
+
+      _validate_card_render(rendered, card.name)
+
+      if rendered
+        append_child(card_wrapper, rendered)
+      end
+
+      card_wrapper
+    end
+
+    def find_card(name)
+      card = cards.find { |c| c.name == name }
+
+      case
+      when card
+        card
+      when ImageCard.name == name
+        ImageCard
+      else
+        _create_unknown_card(name)
+      end
+    end
+
+    def _create_unknown_card(name)
+      UnknownCard.new(name)
+    end
+
+    def _create_card_element
+      create_element('div')
+    end
+
+    def _create_card_argument(card, payload={})
+      env = {
+        name: card.name,
+        in_editor?: false
+      }
+
+      [ env, card_options, payload ]
+    end
+
+    def _validate_card_render(rendered, card_name)
+      return unless rendered
+
+      unless rendered.is_a?(String)
+        raise StandardError.new(%Q[Card "#{cardName}" must render html, but result was #{rendered.class}"]);
+      end
     end
 
     def _render_markers_on_element(element, markers)
@@ -126,7 +186,7 @@ module Mobiledoc
       when LIST_SECTION_TYPE
         LIST_SECTION_TAG_NAMES.include?(tag_name)
       else
-        raise StandardError.new("Cannot validate tagName for unknown section type #{section_type}")
+        raise StandardError.new(%Q[Cannot validate tag_name for unknown section type "#{section_type}"])
       end
     end
 

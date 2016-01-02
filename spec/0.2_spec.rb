@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'mobiledoc_html_renderer/utils/section_types'
+require 'mobiledoc_html_renderer/cards/image'
 
 # NOTE: I would like this to be scoped to the describe block but
 # doing so does not make the section type constants available to
@@ -125,5 +126,25 @@ describe Mobiledoc::HTMLRenderer do
     rendered = render(mobiledoc)
 
     expect(rendered).to eq(%Q[<div><img src="#{data_uri}"></div>])
+  end
+
+  it 'renders a mobiledoc with built-in image card' do
+    card_name = Mobiledoc::ImageCard.name
+
+    payload = { 'src' => data_uri }
+
+    mobiledoc = {
+      'version' => MOBILEDOC_VERSION,
+      'sections' => [
+        [], # markers
+        [ # sections
+          [CARD_SECTION_TYPE, card_name, payload]
+        ]
+      ]
+    }
+
+    rendered = render(mobiledoc)
+
+    expect(rendered).to eq(%Q[<div><div><img src="#{data_uri}"></div></div>])
   end
 end
