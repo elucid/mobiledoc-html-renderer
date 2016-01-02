@@ -32,7 +32,7 @@ module Mobiledoc
         end
       end
 
-      { result: root.to_html(save_with: 0) }
+      root.to_html(save_with: 0)
     end
 
     def create_document_fragment
