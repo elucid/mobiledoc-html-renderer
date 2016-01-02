@@ -147,4 +147,23 @@ describe Mobiledoc::HTMLRenderer do
 
     expect(rendered).to eq(%Q[<div><div><img src="#{data_uri}"></div></div>])
   end
+
+  it 'render mobiledoc with list section and list items' do
+    mobiledoc = {
+      'version' => MOBILEDOC_VERSION,
+      'sections' => [
+        [], # markers
+        [ # sections
+          [LIST_SECTION_TYPE, 'ul', [
+            [[[], 0, 'first item']],
+            [[[], 0, 'second item']]
+          ]]
+        ]
+      ]
+    }
+
+    rendered = render(mobiledoc)
+
+    expect(rendered).to eq('<div><ul><li>first item</li><li>second item</li></ul></div>')
+  end
 end

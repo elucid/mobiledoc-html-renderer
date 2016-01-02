@@ -16,7 +16,7 @@ module Mobiledoc
       version, section_data = *mobiledoc.values_at('version', 'sections')
       self.marker_types, self.sections = *section_data
 
-      self.doc = Nokogiri::HTML::DocumentFragment.parse('')
+      self.doc = Nokogiri::HTML.fragment('')
       self.root = create_document_fragment
       self.cards = state[:cards] || []
       self.card_options = state[:card_options] || {}
@@ -33,7 +33,7 @@ module Mobiledoc
         end
       end
 
-      { result: root.to_html }
+      { result: root.to_html(save_with: 0) }
     end
 
     def create_document_fragment
@@ -74,6 +74,8 @@ module Mobiledoc
         render_markup_section(*section)
       when IMAGE_SECTION_TYPE
         render_image_section(*section)
+      when LIST_SECTION_TYPE
+        render_list_section(*section)
       when CARD_SECTION_TYPE
         render_card_section(*section)
       end
@@ -90,6 +92,23 @@ module Mobiledoc
     def render_image_section(type, url)
       element = create_element('img')
       set_attribute(element, 'src', url)
+      element
+    end
+
+    def render_list_section(type, tag_name, items)
+      return unless valid_section_tag_name?(tag_name, LIST_SECTION_TYPE)
+
+      element = create_element(tag_name)
+      items.each do |item|
+        append_child(element, render_list_item(item))
+      end
+
+      element
+    end
+
+    def render_list_item(markers)
+      element = create_element('li')
+      _render_markers_on_element(element, markers)
       element
     end
 
