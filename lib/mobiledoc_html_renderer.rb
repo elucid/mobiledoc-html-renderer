@@ -68,6 +68,8 @@ module Mobiledoc
       case type
       when MARKUP_SECTION_TYPE
         render_markup_section(*section)
+      when IMAGE_SECTION_TYPE
+        render_image_section(*section)
       end
     end
 
@@ -76,6 +78,12 @@ module Mobiledoc
 
       element = create_element(tag_name)
       _render_markers_on_element(element, markers)
+      element
+    end
+
+    def render_image_section(type, url)
+      element = create_element('img')
+      set_attribute(element, 'src', url)
       element
     end
 

@@ -13,6 +13,8 @@ describe Mobiledoc::HTMLRenderer do
     described_class.new(mobiledoc).render[:result]
   end
 
+  let(:data_uri) { "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=" }
+
   it 'renders an empty mobiledoc' do
     mobiledoc = {
       'version' => MOBILEDOC_VERSION,
@@ -107,5 +109,21 @@ describe Mobiledoc::HTMLRenderer do
     rendered = render(mobiledoc)
 
     expect(rendered).to eq('<div><p><b>hello <i>brave new </i>world</b></p></div>')
+  end
+
+  it 'renders a mobiledoc with image section' do
+    mobiledoc = {
+      'version' => MOBILEDOC_VERSION,
+      'sections' => [
+        [], # markers
+        [ # sections
+          [IMAGE_SECTION_TYPE, data_uri]
+        ]
+      ]
+    }
+
+    rendered = render(mobiledoc)
+
+    expect(rendered).to eq(%Q[<div><img src="#{data_uri}"></div>])
   end
 end
