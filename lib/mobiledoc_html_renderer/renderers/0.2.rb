@@ -155,7 +155,7 @@ module Mobiledoc
         name: card.name
       }
 
-      [ env, card_options, payload ]
+      [ env, payload, card_options ]
     end
 
     def _validate_card_render(rendered, card_name)

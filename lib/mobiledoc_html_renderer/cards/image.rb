@@ -10,7 +10,7 @@ module Mobiledoc
       'html'
     end
 
-    def render(env, options, payload)
+    def render(env, payload, options)
       if payload['src']
         %Q[<img src="#{payload['src']}">]
       end

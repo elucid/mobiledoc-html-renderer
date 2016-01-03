@@ -197,7 +197,7 @@ describe Mobiledoc::HTMLRenderer do
       ]
     }
 
-    expect(title_card).to receive(:render).with({name: card_name}, expected_options, expected_payload).and_return("Howdy friend")
+    expect(title_card).to receive(:render).with({name: card_name}, expected_payload, expected_options).and_return("Howdy friend")
 
     renderer = Mobiledoc::HTMLRenderer.new(cards: [title_card], card_options: expected_options)
     rendered = renderer.render(mobiledoc)
@@ -301,5 +301,51 @@ describe Mobiledoc::HTMLRenderer do
     renderer = Mobiledoc::HTMLRenderer.new(cards: [card])
 
     expect{ renderer.render(mobiledoc) }.to_not raise_error
+  end
+
+  it 'rendering nested mobiledocs in cards' do
+    card = Module.new do
+      module_function
+
+      def name
+        'nested-card'
+      end
+
+      def type
+        'html'
+      end
+
+      def render(env, payload, options)
+        options[:renderer].render(payload['mobiledoc'])
+      end
+    end
+
+    inner_mobiledoc = {
+      'version' => MOBILEDOC_VERSION,
+      'sections' => [
+        [], # markers
+        [ # sections
+          [MARKUP_SECTION_TYPE, 'P', [
+            [[], 0, 'hello world']]
+          ]
+        ]
+      ]
+    }
+
+    mobiledoc = {
+      'version' => MOBILEDOC_VERSION,
+      'sections' => [
+        [], # markers
+        [ # sections
+          [CARD_SECTION_TYPE, 'nested-card', { 'mobiledoc' => inner_mobiledoc }]
+        ]
+      ]
+    }
+
+    renderer = Mobiledoc::HTMLRenderer.new(cards: [card], card_options: { renderer: self })
+
+    rendered = renderer.render(mobiledoc)
+
+    expect(rendered).to eq('<div><div><div><p>hello world</p></div></div></div>')
   end
 end
