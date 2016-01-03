@@ -1,6 +1,6 @@
 require 'spec_helper'
-require 'mobiledoc_html_renderer/utils/section_types'
-require 'mobiledoc_html_renderer/cards/image'
+require 'mobiledoc/utils/section_types'
+require 'mobiledoc/cards/image'
 
 # NOTE: I would like this to be scoped to the describe block but
 # doing so does not make the section type constants available to

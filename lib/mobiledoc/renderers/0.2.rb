@@ -1,7 +1,7 @@
 require "nokogiri"
-require "mobiledoc_html_renderer/utils/section_types"
-require "mobiledoc_html_renderer/utils/tag_names"
-require "mobiledoc_html_renderer/cards/image"
+require "mobiledoc/utils/section_types"
+require "mobiledoc/utils/tag_names"
+require "mobiledoc/cards/image"
 
 module Mobiledoc
   class Renderer_0_2

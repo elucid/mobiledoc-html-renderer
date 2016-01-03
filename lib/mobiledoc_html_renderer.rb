@@ -1,7 +1,7 @@
 require "mobiledoc_html_renderer/version"
-require "mobiledoc_html_renderer/renderers/0.2"
-require "mobiledoc_html_renderer/cards/unknown"
-require "mobiledoc_html_renderer/atoms/unknown"
+require "mobiledoc/renderers/0.2"
+require "mobiledoc/cards/unknown"
+require "mobiledoc/atoms/unknown"
 
 module Mobiledoc
   class HTMLRenderer
