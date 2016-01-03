@@ -166,4 +166,42 @@ describe Mobiledoc::HTMLRenderer do
 
     expect(rendered).to eq('<div><ul><li>first item</li><li>second item</li></ul></div>')
   end
+
+  it 'renders a mobiledoc with card section' do
+    card_name = 'title-card'
+    expected_payload = {}
+    expected_options = {}
+
+    title_card = Module.new do
+      module_function
+
+      def name
+        'title-card'
+      end
+
+      def type
+        'html'
+      end
+
+      def render(env, payload, options)
+      end
+    end
+
+    mobiledoc = {
+      'version' => MOBILEDOC_VERSION,
+      'sections' => [
+        [], # markers
+        [ # sections
+          [CARD_SECTION_TYPE, card_name, expected_payload]
+        ]
+      ]
+    }
+
+    expect(title_card).to receive(:render).with({name: card_name}, expected_options, expected_payload).and_return("Howdy friend")
+
+    renderer = Mobiledoc::HTMLRenderer.new(cards: [title_card], card_options: expected_options)
+    rendered = renderer.render(mobiledoc)
+
+    expect(rendered).to eq('<div><div>Howdy friend</div></div>')
+  end
 end
