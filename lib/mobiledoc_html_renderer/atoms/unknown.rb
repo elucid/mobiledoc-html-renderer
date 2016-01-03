@@ -1,11 +1,15 @@
 module Mobiledoc
-  class UnknownAtom < Struct.new(:name)
+  module UnknownAtom
+    module_function
+
     def type
       'html'
     end
 
-    def render(*args)
-      raise StandardError.new(%Q[Atom "#{name}" not found])
+    def render(env, payload, options)
+      name = env[:name]
+
+      raise StandardError.new(%Q[Card "#{name}" not found])
     end
   end
 end

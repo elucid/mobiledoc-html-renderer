@@ -117,7 +117,7 @@ module Mobiledoc
       card = find_card(name)
 
       card_wrapper = _create_card_element
-      card_arg = _create_card_argument(card, payload)
+      card_arg = _create_card_argument(name, payload)
       rendered = card.render(*card_arg)
 
       _validate_card_render(rendered, card.name)
@@ -138,21 +138,17 @@ module Mobiledoc
       when ImageCard.name == name
         ImageCard
       else
-        _create_unknown_card(name)
+        unknown_card_handler
       end
-    end
-
-    def _create_unknown_card(name)
-      unknown_card_handler.new(name)
     end
 
     def _create_card_element
       create_element('div')
     end
 
-    def _create_card_argument(card, payload={})
+    def _create_card_argument(card_name, payload={})
       env = {
-        name: card.name
+        name: card_name
       }
 
       [ env, payload, card_options ]

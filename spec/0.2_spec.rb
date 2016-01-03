@@ -366,4 +366,36 @@ describe Mobiledoc::HTMLRenderer do
 
     expect{ renderer.render(mobiledoc) }.to raise_error(%Q[Card "missing-card" not found])
   end
+
+  it 'rendering unknown card uses unknown_card_handler' do
+    card_name = 'missing-card'
+    expected_payload = {}
+    expected_options = {}
+
+    unknown_card_handler = Module.new do
+      module_function
+
+      def type
+        'html'
+      end
+
+      def render(env, payload, options)
+      end
+    end
+
+    mobiledoc = {
+      'version' => MOBILEDOC_VERSION,
+      'sections' => [
+        [], # markers
+        [ # sections
+          [CARD_SECTION_TYPE, card_name, expected_payload]
+        ]
+      ]
+    }
+
+    expect(unknown_card_handler).to receive(:render).with({name: card_name}, expected_payload, expected_options)
+
+    renderer = Mobiledoc::HTMLRenderer.new(cards: [], card_options: expected_options, unknown_card_handler: unknown_card_handler)
+    rendered = renderer.render(mobiledoc)
+  end
 end
