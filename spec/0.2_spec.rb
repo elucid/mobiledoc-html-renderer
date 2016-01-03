@@ -402,4 +402,48 @@ describe Mobiledoc::HTMLRenderer do
   it 'throws if given an object of cards' do
     expect{ Mobiledoc::HTMLRenderer.new(cards: {}) }.to raise_exception('`cards` must be passed as an array')
   end
+
+  it 'XSS: tag contents are entity escaped' do
+    xss = "<script>alert('xx')</script>"
+
+    mobiledoc = {
+      'version' => MOBILEDOC_VERSION,
+      'sections' => [
+        [], # markers
+        [ # sections
+          [MARKUP_SECTION_TYPE, 'P', [
+            [[], 0, xss]]
+          ]
+        ]
+      ]
+    }
+
+    rendered = render(mobiledoc)
+
+    expect(rendered).to eq("<div><p>&lt;script&gt;alert('xx')&lt;/script&gt;</p></div>")
+  end
+
+  it 'multiple spaces should preserve whitespace with nbsps' do
+    space = ' '
+    text = [ space * 4, 'some', space * 5, 'text', space * 6].join
+
+    mobiledoc = {
+      'version' => MOBILEDOC_VERSION,
+      'sections' => [
+        [], # markers
+        [ # sections
+          [MARKUP_SECTION_TYPE, 'P', [
+            [[], 0, text]]
+          ]
+        ]
+      ]
+    }
+
+    rendered = render(mobiledoc)
+
+    sn = ' &nbsp;'
+    expected_text = [ sn * 2, 'some', sn * 2, space, 'text', sn * 3 ].join
+
+    expect(rendered).to eq("<div><p>#{expected_text}</p></div>")
+  end
 end
