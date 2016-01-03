@@ -446,4 +446,20 @@ describe Mobiledoc::HTMLRenderer do
 
     expect(rendered).to eq("<div><p>#{expected_text}</p></div>")
   end
+
+  it 'throws when given an unexpected mobiledoc version' do
+    mobiledoc = {
+      'version' => '0.1.0',
+      'sections' => [
+        [], []
+      ]
+    }
+
+    expect{ render(mobiledoc) }.to raise_error('Unexpected Mobiledoc version "0.1.0"')
+
+    mobiledoc['version'] = '0.2.1'
+
+    expect{ render(mobiledoc) }.to raise_error('Unexpected Mobiledoc version "0.2.1"')
+  end
+
 end
