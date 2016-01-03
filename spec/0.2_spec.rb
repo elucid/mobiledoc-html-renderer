@@ -239,4 +239,36 @@ describe Mobiledoc::HTMLRenderer do
 
     expect{ Mobiledoc::HTMLRenderer.new(cards: [bad_card]) }.to raise_error(%Q[Card "bad" must define `render`])
   end
+
+  it 'throws if card render returns invalid result' do
+    bad_card = Module.new do
+      module_function
+
+      def name
+        'bad'
+      end
+
+      def type
+        'html'
+      end
+
+      def render(env, payload, options)
+        Object.new
+      end
+    end
+
+    mobiledoc = {
+      'version' => MOBILEDOC_VERSION,
+      'sections' => [
+        [], # markers
+        [ # sections
+          [CARD_SECTION_TYPE, 'bad']
+        ]
+      ]
+    }
+
+    renderer = Mobiledoc::HTMLRenderer.new(cards: [bad_card])
+
+    expect{ renderer.render(mobiledoc) }.to raise_error(/Card "bad" must render html/)
+  end
 end

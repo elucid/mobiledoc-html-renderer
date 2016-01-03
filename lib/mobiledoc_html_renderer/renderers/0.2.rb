@@ -113,7 +113,7 @@ module Mobiledoc
       element
     end
 
-    def render_card_section(type, name, payload)
+    def render_card_section(type, name, payload={})
       card = find_card(name)
 
       card_wrapper = _create_card_element
@@ -162,7 +162,7 @@ module Mobiledoc
       return unless rendered
 
       unless rendered.is_a?(String)
-        raise StandardError.new(%Q[Card "#{cardName}" must render html, but result was #{rendered.class}"]);
+        raise StandardError.new(%Q[Card "#{card_name}" must render html, but result was #{rendered.class}"]);
       end
     end
 
