@@ -14,6 +14,8 @@ module Mobiledoc
 
     def initialize(mobiledoc, state)
       version, section_data = *mobiledoc.values_at('version', 'sections')
+      validate_version(version)
+
       self.marker_types, self.sections = *section_data
 
       self.doc = Nokogiri::HTML.fragment('')
@@ -21,6 +23,12 @@ module Mobiledoc
       self.cards = state[:cards]
       self.card_options = state[:card_options]
       self.unknown_card_handler = state[:unknown_card_handler]
+    end
+
+    def validate_version(version)
+      if version != self.class::MOBILEDOC_VERSION
+        raise StandardError.new(%Q[Unexpected Mobiledoc version "#{version}"]);
+      end
     end
 
     def render
