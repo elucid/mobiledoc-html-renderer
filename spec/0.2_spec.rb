@@ -204,4 +204,23 @@ describe Mobiledoc::HTMLRenderer do
 
     expect(rendered).to eq('<div><div>Howdy friend</div></div>')
   end
+
+  it 'throws when given invalid card type' do
+    bad_card = Module.new do
+      module_function
+
+      def name
+        'bad'
+      end
+
+      def type
+        'other'
+      end
+
+      def render(env, payload, options)
+      end
+    end
+
+    expect{ Mobiledoc::HTMLRenderer.new(cards: [bad_card]) }.to raise_error(%Q[Card "bad" must be of type "html", was "other"])
+  end
 end
