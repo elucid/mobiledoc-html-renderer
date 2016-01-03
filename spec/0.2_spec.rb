@@ -348,4 +348,22 @@ describe Mobiledoc::HTMLRenderer do
 
     expect(rendered).to eq('<div><div><div><p>hello world</p></div></div></div>')
   end
+
+  it 'rendering unknown card without unknown_card_handler throws' do
+    card_name = 'missing-card'
+
+    mobiledoc = {
+      'version' => MOBILEDOC_VERSION,
+      'sections' => [
+        [], # markers
+        [ # sections
+          [CARD_SECTION_TYPE, card_name]
+        ]
+      ]
+    }
+
+    renderer = Mobiledoc::HTMLRenderer.new(cards: [])
+
+    expect{ renderer.render(mobiledoc) }.to raise_error(%Q[Card "missing-card" not found])
+  end
 end
