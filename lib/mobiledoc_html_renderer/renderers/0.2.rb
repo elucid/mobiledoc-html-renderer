@@ -2,23 +2,25 @@ require "nokogiri"
 require "mobiledoc_html_renderer/utils/section_types"
 require "mobiledoc_html_renderer/utils/tag_names"
 require "mobiledoc_html_renderer/cards/image"
-require "mobiledoc_html_renderer/cards/unknown"
 
 module Mobiledoc
   class Renderer_0_2
+    MOBILEDOC_VERSION = '0.2.0'
+
     include Mobiledoc::Utils::SectionTypes
     include Mobiledoc::Utils::TagNames
 
-    attr_accessor :root, :marker_types, :sections, :doc, :cards, :card_options
+    attr_accessor :root, :marker_types, :sections, :doc, :cards, :card_options, :unknown_card_handler
 
-    def initialize(mobiledoc, state={})
+    def initialize(mobiledoc, state)
       version, section_data = *mobiledoc.values_at('version', 'sections')
       self.marker_types, self.sections = *section_data
 
       self.doc = Nokogiri::HTML.fragment('')
       self.root = create_document_fragment
-      self.cards = state[:cards] || []
-      self.card_options = state[:card_options] || {}
+      self.cards = state[:cards]
+      self.card_options = state[:card_options]
+      self.unknown_card_handler = state[:unknown_card_handler]
     end
 
     def render
@@ -141,7 +143,7 @@ module Mobiledoc
     end
 
     def _create_unknown_card(name)
-      UnknownCard.new(name)
+      unknown_card_handler.new(name)
     end
 
     def _create_card_element
