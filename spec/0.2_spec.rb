@@ -398,4 +398,8 @@ describe Mobiledoc::HTMLRenderer do
     renderer = Mobiledoc::HTMLRenderer.new(cards: [], card_options: expected_options, unknown_card_handler: unknown_card_handler)
     rendered = renderer.render(mobiledoc)
   end
+
+  it 'throws if given an object of cards' do
+    expect{ Mobiledoc::HTMLRenderer.new(cards: {}) }.to raise_exception('`cards` must be passed as an array')
+  end
 end
