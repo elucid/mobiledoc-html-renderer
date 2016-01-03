@@ -462,4 +462,48 @@ describe Mobiledoc::HTMLRenderer do
     expect{ render(mobiledoc) }.to raise_error('Unexpected Mobiledoc version "0.2.1"')
   end
 
+  it 'XSS: unexpected markup and list section tag names are not renderered' do
+    mobiledoc = {
+      'version' => MOBILEDOC_VERSION,
+      'sections' => [
+        [],
+        [
+          [MARKUP_SECTION_TYPE, 'script', [
+            [[], 0, 'alert("markup section XSS")']
+          ]],
+          [LIST_SECTION_TYPE, 'script', [
+            [[[], 0, 'alert("list section XSS")']]
+          ]]
+        ]
+      ]
+    }
+
+    rendered = render(mobiledoc)
+
+    expect(rendered).to_not match(/script/)
+  end
+
+  it 'XSS: unexpected markup types are not rendered' do
+    mobiledoc = {
+      'version' => MOBILEDOC_VERSION,
+      'sections' => [
+        [
+          ['b'], # valid
+          ['em'], # valid
+          ['script'] # invalid
+        ],
+        [
+          [MARKUP_SECTION_TYPE, 'p', [
+            [[0], 0, 'bold text'],
+            [[1,2], 3, 'alert("markup XSS")'],
+            [[], 0, 'plain text']
+          ]]
+        ]
+      ]
+    }
+
+    rendered = render(mobiledoc)
+
+    expect(rendered).to_not match(/script/)
+  end
 end
