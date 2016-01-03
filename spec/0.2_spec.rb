@@ -223,4 +223,20 @@ describe Mobiledoc::HTMLRenderer do
 
     expect{ Mobiledoc::HTMLRenderer.new(cards: [bad_card]) }.to raise_error(%Q[Card "bad" must be of type "html", was "other"])
   end
+
+  it 'throws when given card without `render`' do
+    bad_card = Module.new do
+      module_function
+
+      def name
+        'bad'
+      end
+
+      def type
+        'html'
+      end
+    end
+
+    expect{ Mobiledoc::HTMLRenderer.new(cards: [bad_card]) }.to raise_error(%Q[Card "bad" must define `render`])
+  end
 end
