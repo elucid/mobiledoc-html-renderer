@@ -6,10 +6,10 @@ module Mobiledoc
       'html'
     end
 
-    def render(env, payload, options)
+    def render(env, value, payload, options)
       name = env[:name]
 
-      raise StandardError.new(%Q[Card "#{name}" not found])
+      raise StandardError.new(%Q[Atom "#{name}" not found])
     end
   end
 end

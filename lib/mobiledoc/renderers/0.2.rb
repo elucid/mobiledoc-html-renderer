@@ -124,6 +124,10 @@ module Mobiledoc
     def render_card_section(type, name, payload={})
       card = find_card(name)
 
+      _render_card_section(card, name, payload)
+    end
+
+    def _render_card_section(card, name, payload)
       card_wrapper = _create_card_element
       card_arg = _create_card_argument(name, payload)
       rendered = card.render(*card_arg)
