@@ -3,6 +3,7 @@ require "mobiledoc/renderers/0.2"
 require "mobiledoc/renderers/0.3"
 require "mobiledoc/cards/unknown"
 require "mobiledoc/atoms/unknown"
+require "mobiledoc/error"
 
 module Mobiledoc
   class HTMLRenderer
@@ -31,32 +32,32 @@ module Mobiledoc
 
     def validate_cards(cards)
       unless cards.is_a?(Array)
-        raise StandardError.new("`cards` must be passed as an array")
+        raise Mobiledoc::Error.new("`cards` must be passed as an array")
       end
 
       cards.each do |card|
         unless card.type == 'html'
-          raise StandardError.new(%Q[Card "#{card.name}" must be of type "html", was "#{card.type}"])
+          raise Mobiledoc::Error.new(%Q[Card "#{card.name}" must be of type "html", was "#{card.type}"])
         end
 
         unless card.respond_to?(:render)
-          raise StandardError.new(%Q[Card "#{card.name}" must define \`render\`])
+          raise Mobiledoc::Error.new(%Q[Card "#{card.name}" must define \`render\`])
         end
       end
     end
 
     def validate_atoms(atoms)
       unless atoms.is_a?(Array)
-        raise StandardError.new("`atoms` must be passed as an array")
+        raise Mobiledoc::Error.new("`atoms` must be passed as an array")
       end
 
       atoms.each do |atom|
         unless atom.type == 'html'
-          raise StandardError.new(%Q[Atom "#{atom.name}" must be of type "html", was "#{atom.type}"])
+          raise Mobiledoc::Error.new(%Q[Atom "#{atom.name}" must be of type "html", was "#{atom.type}"])
         end
 
         unless atom.respond_to?(:render)
-          raise StandardError.new(%Q[Atom "#{atom.name}" must define \`render\`])
+          raise Mobiledoc::Error.new(%Q[Atom "#{atom.name}" must define \`render\`])
         end
       end
     end
@@ -70,7 +71,7 @@ module Mobiledoc
       when '0.3.0', nil
         Renderer_0_3.new(mobiledoc, state).render
       else
-        raise StandardError.new(%Q[Unexpected Mobiledoc version "#{version}"])
+        raise Mobiledoc::Error.new(%Q[Unexpected Mobiledoc version "#{version}"])
       end
     end
   end

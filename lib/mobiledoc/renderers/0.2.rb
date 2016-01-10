@@ -2,6 +2,7 @@ require "nokogiri"
 require "mobiledoc/utils/section_types"
 require "mobiledoc/utils/tag_names"
 require "mobiledoc/cards/image"
+require "mobiledoc/error"
 
 module Mobiledoc
   class Renderer_0_2
@@ -27,7 +28,7 @@ module Mobiledoc
 
     def validate_version(version)
       if version != self.class::MOBILEDOC_VERSION
-        raise StandardError.new(%Q[Unexpected Mobiledoc version "#{version}"]);
+        raise Mobiledoc::Error.new(%Q[Unexpected Mobiledoc version "#{version}"]);
       end
     end
 
@@ -170,7 +171,7 @@ module Mobiledoc
       return unless rendered
 
       unless rendered.is_a?(String)
-        raise StandardError.new(%Q[Card "#{card_name}" must render html, but result was #{rendered.class}"]);
+        raise Mobiledoc::Error.new(%Q[Card "#{card_name}" must render html, but result was #{rendered.class}"]);
       end
     end
 
@@ -213,7 +214,7 @@ module Mobiledoc
       when LIST_SECTION_TYPE
         LIST_SECTION_TAG_NAMES.include?(tag_name)
       else
-        raise StandardError.new(%Q[Cannot validate tag_name for unknown section type "#{section_type}"])
+        raise Mobiledoc::Error.new(%Q[Cannot validate tag_name for unknown section type "#{section_type}"])
       end
     end
 

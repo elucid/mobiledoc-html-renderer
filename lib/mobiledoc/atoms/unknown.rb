@@ -1,3 +1,5 @@
+require "mobiledoc/error"
+
 module Mobiledoc
   module UnknownAtom
     module_function
@@ -9,7 +11,7 @@ module Mobiledoc
     def render(env, value, payload, options)
       name = env[:name]
 
-      raise StandardError.new(%Q[Atom "#{name}" not found])
+      raise Mobiledoc::Error.new(%Q[Atom "#{name}" not found])
     end
   end
 end

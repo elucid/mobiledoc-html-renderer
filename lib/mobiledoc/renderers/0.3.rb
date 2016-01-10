@@ -1,5 +1,6 @@
 require "mobiledoc/renderers/0.2"
 require 'mobiledoc/utils/marker_types'
+require "mobiledoc/error"
 
 module Mobiledoc
   class Renderer_0_3 < Renderer_0_2
@@ -36,7 +37,7 @@ module Mobiledoc
       card_type = card_types[index]
 
       unless card_type
-        raise StandardError.new("No card definition found at index #{index}")
+        raise Mobiledoc::Error.new("No card definition found at index #{index}")
       end
 
       name, payload = *card_type
@@ -72,7 +73,7 @@ module Mobiledoc
         when ATOM_MARKER_TYPE
           append_child(current_element, _render_atom(value))
         else
-          raise StandardError.new("Unknown markup type (#{type})");
+          raise Mobiledoc::Error.new("Unknown markup type (#{type})");
         end
 
         close_count.times do
@@ -102,7 +103,7 @@ module Mobiledoc
       atom_type = atom_types[index]
 
       unless atom_type
-        raise StandardError.new("No atom definition found at index #{index}")
+        raise Mobiledoc::Error.new("No atom definition found at index #{index}")
       end
 
       name, value, payload = *atom_type
@@ -123,7 +124,7 @@ module Mobiledoc
       return unless rendered
 
       unless rendered.is_a?(String)
-        raise StandardError.new(%Q[Atom "#{atom_name}" must render html, but result was #{rendered.class}"]);
+        raise Mobiledoc::Error.new(%Q[Atom "#{atom_name}" must render html, but result was #{rendered.class}"]);
       end
     end
 

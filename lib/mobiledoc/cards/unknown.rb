@@ -1,3 +1,5 @@
+require "mobiledoc/error"
+
 module Mobiledoc
   module UnknownCard
     module_function
@@ -9,7 +11,7 @@ module Mobiledoc
     def render(env, payload, options)
       name = env[:name]
 
-      raise StandardError.new(%Q[Card "#{name}" not found])
+      raise Mobiledoc::Error.new(%Q[Card "#{name}" not found])
     end
   end
 end
