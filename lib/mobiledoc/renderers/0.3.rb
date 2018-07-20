@@ -4,7 +4,7 @@ require "mobiledoc/error"
 
 module Mobiledoc
   class Renderer_0_3 < Renderer_0_2
-    MOBILEDOC_VERSION = '0.3.0'
+    MOBILEDOC_VERSIONS = ['0.3.0', '0.3.1']
 
     include Mobiledoc::Utils::MarkerTypes
 
