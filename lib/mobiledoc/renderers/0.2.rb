@@ -6,7 +6,7 @@ require "mobiledoc/error"
 
 module Mobiledoc
   class Renderer_0_2
-    MOBILEDOC_VERSION = '0.2.0'
+    MOBILEDOC_VERSION = /[0][.][2][.].$/
 
     include Mobiledoc::Utils::SectionTypes
     include Mobiledoc::Utils::TagNames
@@ -27,7 +27,7 @@ module Mobiledoc
     end
 
     def validate_version(version)
-      if version != self.class::MOBILEDOC_VERSION
+      if (self.class::MOBILEDOC_VERSION =~ version).nil?
         raise Mobiledoc::Error.new(%Q[Unexpected Mobiledoc version "#{version}"]);
       end
     end

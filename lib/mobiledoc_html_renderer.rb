@@ -66,9 +66,9 @@ module Mobiledoc
       version = mobiledoc['version']
 
       case version
-      when '0.2.0', nil
+      when Renderer_0_2::MOBILEDOC_VERSION
         Renderer_0_2.new(mobiledoc, state).render
-      when '0.3.0', nil
+      when Renderer_0_3::MOBILEDOC_VERSION
         Renderer_0_3.new(mobiledoc, state).render
       else
         raise Mobiledoc::Error.new(%Q[Unexpected Mobiledoc version "#{version}"])
