@@ -17,6 +17,7 @@ module Mobiledoc
       validate_atoms(atoms)
 
       card_options = options[:card_options] || {}
+      element_renderer = options[:element_renderer] || {}
 
       unknown_card_handler = options[:unknown_card_handler] || UnknownCard
       unknown_atom_handler = options[:unknown_atom_handler] || UnknownAtom
@@ -26,7 +27,8 @@ module Mobiledoc
         atoms: atoms,
         card_options: card_options,
         unknown_card_handler: unknown_card_handler,
-        unknown_atom_handler: unknown_atom_handler
+        unknown_atom_handler: unknown_atom_handler,
+        element_renderer: element_renderer,
       }
     end
 

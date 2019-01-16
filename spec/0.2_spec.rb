@@ -505,5 +505,39 @@ module ZeroTwoZero
 
       expect(rendered).to_not match(/script/)
     end
+
+    it 'supports passing a element_renderer' do
+      element_renderer = {
+        'STRONG' => lambda do |create_element, attributes|
+          element = create_element.call('strong')
+          element.set_attribute('style', "color: #{attributes['data-color']}")
+          element
+        end,
+        'H2' => lambda do |create_element|
+          element = create_element.call('div')
+          element.set_attribute('class', 'subheadline')
+          element
+        end
+      }
+      mobiledoc = {
+        'version' => MOBILEDOC_VERSION,
+        'sections' => [
+          [
+            ['strong', ['data-color', 'blue']]
+          ], # MARKUPS
+          [
+            [MARKUP_SECTION_TYPE, 'h2', [
+              [[], 0, 'plain h2 '],
+              [[0], 1, 'blue strong bit'],
+            ]],
+          ]
+        ]
+      }
+
+      renderer = Mobiledoc::HTMLRenderer.new(cards: [], element_renderer: element_renderer)
+      rendered = renderer.render(mobiledoc)
+
+      expect(rendered).to eq('<div><div class="subheadline">plain h2 <strong style="color: blue">blue strong bit</strong></div></div>')
+    end
   end
 end

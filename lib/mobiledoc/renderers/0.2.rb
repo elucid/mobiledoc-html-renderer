@@ -11,7 +11,7 @@ module Mobiledoc
     include Mobiledoc::Utils::SectionTypes
     include Mobiledoc::Utils::TagNames
 
-    attr_accessor :root, :marker_types, :sections, :doc, :cards, :card_options, :unknown_card_handler
+    attr_accessor :root, :marker_types, :sections, :doc, :cards, :card_options, :unknown_card_handler, :element_renderer
 
     def initialize(mobiledoc, state)
       version, section_data = *mobiledoc.values_at('version', 'sections')
@@ -24,6 +24,7 @@ module Mobiledoc
       self.cards = state[:cards]
       self.card_options = state[:card_options]
       self.unknown_card_handler = state[:unknown_card_handler]
+      self.element_renderer = state[:element_renderer]
     end
 
     def validate_version(version)
@@ -64,6 +65,9 @@ module Mobiledoc
     end
 
     def create_element_from_marker_type(tag_name='', attributes=[])
+      custom_renderer = element_renderer[tag_name.upcase]
+      return custom_renderer.call(method(:create_element), Hash[*attributes]) if custom_renderer
+
       element = create_element(tag_name)
 
       attributes.each_slice(2) do |prop_name, prop_value|
@@ -94,7 +98,12 @@ module Mobiledoc
     def render_markup_section(type, tag_name, markers)
       return unless valid_section_tag_name?(tag_name, MARKUP_SECTION_TYPE)
 
-      element = create_element(tag_name)
+      custom_renderer = element_renderer[tag_name.upcase]
+      element = if custom_renderer
+                  custom_renderer.call(method(:create_element))
+                else
+                  create_element(tag_name)
+                end
       _render_markers_on_element(element, markers)
       element
     end
