@@ -49,6 +49,81 @@ mobiledoc = {
 renderer = Mobiledoc::HTMLRenderer.new(cards: [])
 renderer.render(mobiledoc) # "<div><p><b>hello world</b></p></div>"
 ```
+### Cards & Atoms
+
+Define an object that responds to `#name`, `#type` and `#render`. Examples use a module but you can use whatever you like.
+The `#render` method signatures is the only difference between cards & atoms.
+
+```ruby
+module TitleCard
+  module_function
+
+  # must match card name in mobiledoc document
+  def name
+    'title'
+  end
+
+  # must be 'html'
+  def type
+    'html'
+  end
+
+  # == Parameters:
+  # env::
+  #   A hash containing the key `:name` that will be equal to the name of the card/atom
+  #
+  # payload::
+  #   The payload that was stored with this card/atom
+  #
+  # options::
+  #   Options passed to the renderer at render time as `card_options`
+  #
+  # == Returns:
+  # A string representing the card
+  #
+  def render(env, payload, options)
+    "<h1 class='title'>#{payload['content']}</h1>"
+  end
+end
+
+module MentionAtom
+  module_function
+
+  # must match atom name in mobiledoc document
+  def name
+    'mention'
+  end
+
+  # must be 'html'
+  def type
+    'html'
+  end
+
+  # == Parameters:
+  # env::
+  #   A hash containing the key `:name` that will be equal to the name of the atom
+  #
+  # value::
+  #   The value that was stored with the atom
+  #
+  # payload::
+  #   The payload that was stored with this atom
+  #
+  # options::
+  #   Options passed to the renderer at render time as `card_options`
+  #
+  # == Returns:
+  # A string representing the atom
+  #
+  def render(env, value, payload, options)
+    "<span class='mention'>#{value}</span>"
+  end
+end
+
+mobiledoc = ...
+renderer = Mobiledoc::HTMLRenderer.new(cards: [TitleCard], atoms: [MentionAtom])
+renderer.render(mobiledoc) # "<div><h1 class='title'>Oh hai</h1><span class='mention'>@sdhull</span></div>"
+```
 
 ## Development
 
