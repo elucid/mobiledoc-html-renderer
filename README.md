@@ -125,6 +125,31 @@ renderer = Mobiledoc::HTMLRenderer.new(cards: [TitleCard], atoms: [MentionAtom])
 renderer.render(mobiledoc) # "<div><h1 class='title'>Oh hai</h1><span class='mention'>@sdhull</span></div>"
 ```
 
+### Custom Element Renderers
+
+As with the javascript renderer, you can define custom element renderers. Unlike the javascript renderer, you can even define renderers for markups (not just sections). So for example, if you render strong tags in some special way, you might do it like this:
+
+```ruby
+# == Parameters:
+# create_element::
+#   A proc that accepts a tagname and will return a Nokogiri node.
+#
+# attributes::
+#   Hash of attributes that were stored with that markup (only passed to markup renderers, not to section renderers).
+#
+# == Returns:
+# MUST return the node created by `create_element`
+#
+strong_renderer = lambda do |create_element, attributes|
+  element = create_element.call('strong')
+  weight = attributes['data-weight']
+  element.set_attribute('class', "font-weight-#{weight}")
+  element
+end
+renderer = Mobiledoc::HTMLRenderer.new(element_renderer: {'STRONG' => strong_renderer})
+```
+
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
