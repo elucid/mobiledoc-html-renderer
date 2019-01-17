@@ -8,7 +8,7 @@ module Mobiledoc
 
     include Mobiledoc::Utils::MarkerTypes
 
-    attr_accessor :atom_types, :card_types, :atoms, :unknown_atom_handler, :element_renderer
+    attr_accessor :atom_types, :card_types, :atoms, :unknown_atom_handler
 
     def initialize(mobiledoc, state)
       version, sections, atom_types, card_types, marker_types = *mobiledoc.values_at('version', 'sections', 'atoms', 'cards', 'markups')
@@ -25,7 +25,8 @@ module Mobiledoc
       self.card_options = state[:card_options]
       self.unknown_card_handler = state[:unknown_card_handler]
       self.unknown_atom_handler = state[:unknown_atom_handler]
-      self.element_renderer = state[:element_renderer]
+      self.markup_element_renderer = state[:markup_element_renderer]
+      self.section_element_renderer = state[:section_element_renderer]
     end
 
     def render_card_section(type, index)
