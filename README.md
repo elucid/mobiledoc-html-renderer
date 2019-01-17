@@ -49,6 +49,127 @@ mobiledoc = {
 renderer = Mobiledoc::HTMLRenderer.new(cards: [])
 renderer.render(mobiledoc) # "<div><p><b>hello world</b></p></div>"
 ```
+### Cards & Atoms
+
+Define an object that responds to `#name`, `#type` and `#render`. Examples use a module but you can use whatever you like.
+The `#render` method signatures is the only difference between cards & atoms.
+
+```ruby
+module TitleCard
+  module_function
+
+  # must match card name in mobiledoc document
+  def name
+    'title'
+  end
+
+  # must be 'html'
+  def type
+    'html'
+  end
+
+  # == Parameters:
+  # env::
+  #   A hash containing the key `:name` that will be equal to the name of the card/atom
+  #
+  # payload::
+  #   The payload that was stored with this card/atom
+  #
+  # options::
+  #   Options passed to the renderer at render time as `card_options`
+  #
+  # == Returns:
+  # A string representing the card
+  #
+  def render(env, payload, options)
+    "<h1 class='title'>#{payload['content']}</h1>"
+  end
+end
+
+module MentionAtom
+  module_function
+
+  # must match atom name in mobiledoc document
+  def name
+    'mention'
+  end
+
+  # must be 'html'
+  def type
+    'html'
+  end
+
+  # == Parameters:
+  # env::
+  #   A hash containing the key `:name` that will be equal to the name of the atom
+  #
+  # value::
+  #   The value that was stored with the atom
+  #
+  # payload::
+  #   The payload that was stored with this atom
+  #
+  # options::
+  #   Options passed to the renderer at render time as `card_options`
+  #
+  # == Returns:
+  # A string representing the atom
+  #
+  def render(env, value, payload, options)
+    "<span class='mention'>#{value}</span>"
+  end
+end
+
+mobiledoc = ...
+renderer = Mobiledoc::HTMLRenderer.new(cards: [TitleCard], atoms: [MentionAtom])
+renderer.render(mobiledoc) # "<div><h1 class='title'>Oh hai</h1><span class='mention'>@sdhull</span></div>"
+```
+
+### Custom Element Renderers
+
+As with the javascript dom renderer, you can define custom element renderers. In order to maintain symmetry with the js dom renderer, these are passed as two hashes, `section_element_renderer` and `markup_element_renderer`. Note that keys in these hashes must be uppercase.
+
+#### section_element_renderer
+If you render h1 tags in some special way, you might do it like this:
+
+```ruby
+# == Parameters:
+# create_element::
+#   A proc that accepts a tagname and will return a Nokogiri node.
+#
+# == Returns:
+# MUST return the node created by `create_element`
+#
+h1_renderer = lambda do |create_element|
+  element = create_element.call('h1')
+  element.set_attribute('class', 'primary-title')
+  element
+end
+renderer = Mobiledoc::HTMLRenderer.new(section_element_renderer: {'H1' => h1_renderer})
+```
+
+#### markup_element_renderer
+For example, if you render strong tags in some special way, you might do it like this:
+
+```ruby
+# == Parameters:
+# create_element::
+#   A proc that accepts a tagname and will return a Nokogiri node.
+#
+# attributes::
+#   Hash of attributes that were stored with that markup.
+#
+# == Returns:
+# MUST return the node created by `create_element`
+#
+strong_renderer = lambda do |create_element, attributes|
+  element = create_element.call('strong')
+  weight = attributes['data-weight']
+  element.set_attribute('class', "font-weight-#{weight}")
+  element
+end
+renderer = Mobiledoc::HTMLRenderer.new(markup_element_renderer: {'STRONG' => strong_renderer})
+```
 
 ## Development
 

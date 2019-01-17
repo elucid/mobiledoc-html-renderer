@@ -729,5 +729,37 @@ module ZeroThreeZero
       renderer = Mobiledoc::HTMLRenderer.new(atoms: [], card_options: expected_options, unknown_atom_handler: unknown_atom_handler)
       rendered = renderer.render(mobiledoc)
     end
+
+    it 'supports passing a element_renderer' do
+      strong = lambda do |create_element, attributes|
+        element = create_element.call('strong')
+        element.set_attribute('style', "color: #{attributes['data-color']}")
+        element
+      end
+      h2 = lambda do |create_element|
+        element = create_element.call('div')
+        element.set_attribute('class', 'subheadline')
+        element
+      end
+      mobiledoc = {
+        'version' => MOBILEDOC_VERSION,
+        'atoms' => [],
+        'cards' => [],
+        'markups' => [
+          ['strong', ['data-color', 'blue']]
+        ],
+        'sections' => [
+          [MARKUP_SECTION_TYPE, 'h2', [
+            [MARKUP_MARKER_TYPE, [], 0, 'plain h2 '],
+            [MARKUP_MARKER_TYPE, [0], 1, 'blue strong bit'],
+          ]],
+        ]
+      }
+
+      renderer = Mobiledoc::HTMLRenderer.new(cards: [], section_element_renderer: {'H2' => h2}, markup_element_renderer: {'STRONG' => strong})
+      rendered = renderer.render(mobiledoc)
+
+      expect(rendered).to eq('<div><div class="subheadline">plain h2 <strong style="color: blue">blue strong bit</strong></div></div>')
+    end
   end
 end

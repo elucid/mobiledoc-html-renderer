@@ -25,6 +25,8 @@ module Mobiledoc
       self.card_options = state[:card_options]
       self.unknown_card_handler = state[:unknown_card_handler]
       self.unknown_atom_handler = state[:unknown_atom_handler]
+      self.markup_element_renderer = state[:markup_element_renderer]
+      self.section_element_renderer = state[:section_element_renderer]
     end
 
     def render_card_section(type, index)
