@@ -751,5 +751,32 @@ module ZeroThreeZero
         expect(rendered).to eq('<div><aside><code>hello world</code></aside></div>')
       end
     end
+
+    context '0.3.2' do
+      it 'renders 0.3.2-specific sections with attributes' do
+        mobiledoc = {
+          'version' => '0.3.2',
+          'atoms' => [],
+          'cards' => [],
+          'markups' => [
+            ['CODE']
+          ],
+          'sections' => [
+            [
+              MARKUP_SECTION_TYPE,
+              'ASIDE',
+              [
+                [MARKUP_MARKER_TYPE, [0], 1, 'hello world']
+              ],
+              ["data-md-text-align", "center"]
+            ]
+          ]
+        }
+
+        rendered = render(mobiledoc)
+
+        expect(rendered).to eq('<div><aside data-md-text-align="center"><code>hello world</code></aside></div>')
+      end
+    end
   end
 end
