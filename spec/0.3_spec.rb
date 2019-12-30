@@ -729,5 +729,27 @@ module ZeroThreeZero
       renderer = Mobiledoc::HTMLRenderer.new(atoms: [], card_options: expected_options, unknown_atom_handler: unknown_atom_handler)
       rendered = renderer.render(mobiledoc)
     end
+
+    context '0.3.1' do
+      it 'renders 0.3.1-specific sections and markups' do
+        mobiledoc = {
+          'version' => '0.3.1',
+          'atoms' => [],
+          'cards' => [],
+          'markups' => [
+            ['CODE']
+          ],
+          'sections' => [
+            [MARKUP_SECTION_TYPE, 'ASIDE', [
+              [MARKUP_MARKER_TYPE, [0], 1, 'hello world']]
+            ]
+          ]
+        }
+
+        rendered = render(mobiledoc)
+
+        expect(rendered).to eq('<div><aside><code>hello world</code></aside></div>')
+      end
+    end
   end
 end
